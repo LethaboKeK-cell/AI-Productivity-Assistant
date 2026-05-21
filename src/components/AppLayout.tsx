@@ -1,9 +1,9 @@
 import { Link, Outlet, useRouterState } from "@tanstack/react-router";
-import { LayoutDashboard, Mail, FileText, Calendar, Sparkles, Radar } from "lucide-react";
+import { LayoutDashboard, Mail, FileText, Calendar, Sparkles, Radar, Settings } from "lucide-react";
 import type { ReactNode } from "react";
 
 type NavItem = {
-  to: "/" | "/email" | "/notes" | "/planner";
+  to: "/" | "/email" | "/notes" | "/planner" | "/settings";
   label: string;
   code: string;
   icon: typeof LayoutDashboard;
@@ -15,6 +15,7 @@ const nav: NavItem[] = [
   { to: "/email", label: "Comms Array", code: "01", icon: Mail },
   { to: "/notes", label: "Signal Decoder", code: "02", icon: FileText },
   { to: "/planner", label: "Flight Plan", code: "03", icon: Calendar },
+  { to: "/settings", label: "Config Bay", code: "04", icon: Settings },
 ];
 
 export function AppLayout({ children }: { children?: ReactNode }) {
