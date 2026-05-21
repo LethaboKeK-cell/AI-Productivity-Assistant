@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Check, Plug, Sliders, UserCog } from "lucide-react";
 import { AppLayout, PageHeader } from "@/components/AppLayout";
 import { Card, Pill } from "@/components/ui-kit";
-import { store, useStore, type Audience, type Tone } from "@/lib/store";
+import { store, useStore, type Audience, type Tone, type Preferences } from "@/lib/store";
 
 export const Route = createFileRoute("/settings")({
   component: SettingsPage,
