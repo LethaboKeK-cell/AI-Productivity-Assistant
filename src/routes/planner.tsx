@@ -36,6 +36,7 @@ type Plan = {
 function PlannerPage() {
   const plan = useServerFn(planTasks);
   const actionItems = useStore((s) => s.actionItems);
+  const preferences = useStore((s) => s.preferences);
 
   const [range, setRange] = useState<"day" | "week">("day");
   const [context, setContext] = useState("");
@@ -44,6 +45,31 @@ function PlannerPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [output, setOutput] = useState<Plan | null>(null);
+
+  function exportTasksCsv(target: "trello" | "asana") {
+    if (actionItems.length === 0) return;
+    const header =
+      target === "trello"
+        ? ["Card Name", "Card Description", "Due Date", "Labels"]
+        : ["Name", "Notes", "Due Date", "Priority"];
+    const rows = actionItems.map((i) => [
+      i.task,
+      `Owner: ${i.owner} · Source: ${i.source}`,
+      i.deadline,
+      i.priority,
+    ]);
+    const csv = [header, ...rows]
+      .map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(","))
+      .join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `aeon-tasks-${target}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
 
   async function onGenerate() {
     if (actionItems.length === 0) return;
