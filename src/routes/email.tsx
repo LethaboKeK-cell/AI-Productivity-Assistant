@@ -104,12 +104,36 @@ function EmailPage() {
     window.location.href = url;
   }
 
+  function exportGmail() {
+    if (!output) return;
+    const url = `https://mail.google.com/mail/?view=cm&fs=1&su=${encodeURIComponent(
+      output.subject,
+    )}&body=${encodeURIComponent(`${output.greeting}\n\n${output.body}\n\n${output.signoff}`)}`;
+    window.open(url, "_blank");
+  }
+
+  function exportOutlook() {
+    if (!output) return;
+    const url = `https://outlook.office.com/mail/deeplink/compose?subject=${encodeURIComponent(
+      output.subject,
+    )}&body=${encodeURIComponent(`${output.greeting}\n\n${output.body}\n\n${output.signoff}`)}`;
+    window.open(url, "_blank");
+  }
+
   return (
     <AppLayout>
       <PageHeader
         title="Smart Email Generator"
         description="Describe the situation. Pick a tone and audience. Get a ready-to-send draft."
+        actions={
+          preferences.contextAware && latestSummary ? (
+            <Button variant="outline" size="md" onClick={pullFromLatestMeeting}>
+              <Sparkles className="size-4" /> Pull from latest meeting
+            </Button>
+          ) : undefined
+        }
       />
+
 
       <div className="grid grid-cols-12 gap-6">
         <Card
