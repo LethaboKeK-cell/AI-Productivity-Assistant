@@ -72,15 +72,20 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Aeon AI — Productivity Suite" },
+      {
+        name: "description",
+        content:
+          "AI-powered productivity suite: smart email drafting, meeting notes summarization, and intelligent task planning.",
+      },
+      { name: "author", content: "Aeon AI" },
+      { property: "og:title", content: "Aeon AI — Productivity Suite" },
+      {
+        property: "og:description",
+        content: "Automate communication, summarization, and planning in one cohesive workflow.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
-    ],
     links: [
       {
         rel: "stylesheet",
