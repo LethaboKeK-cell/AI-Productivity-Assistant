@@ -5,17 +5,17 @@ type Size = "sm" | "md";
 
 const variants: Record<Variant, string> = {
   primary:
-    "bg-primary text-primary-foreground hover:bg-primary/90 shadow-glow disabled:opacity-50",
+    "bg-gradient-to-br from-primary via-primary to-accent text-primary-foreground hover:brightness-110 shadow-glow disabled:opacity-50 border border-primary/40",
   secondary:
     "bg-foreground text-background hover:bg-foreground/90 font-semibold disabled:opacity-50",
-  ghost: "text-muted-foreground hover:text-foreground hover:bg-accent/40 disabled:opacity-50",
+  ghost: "text-muted-foreground hover:text-foreground hover:bg-accent/30 disabled:opacity-50",
   outline:
-    "border border-border text-foreground hover:bg-accent/40 disabled:opacity-50",
+    "border border-border bg-background/30 backdrop-blur text-foreground hover:bg-accent/30 hover:border-primary/40 disabled:opacity-50",
 };
 
 const sizes: Record<Size, string> = {
-  sm: "px-3 py-1.5 text-xs rounded-md",
-  md: "px-4 py-2 text-sm rounded-lg",
+  sm: "px-3 py-1.5 text-xs rounded-md tracking-wide",
+  md: "px-5 py-2.5 text-sm rounded-lg tracking-wide uppercase font-medium",
 };
 
 export function Button({
@@ -60,20 +60,20 @@ export function Card({
   return (
     <section
       className={[
-        "bg-surface border border-border rounded-xl shadow-card",
+        "glass glow-border rounded-2xl relative overflow-hidden scanlines",
         className,
       ].join(" ")}
     >
       {(title || actions) && (
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border/60">
           <div className="flex items-center gap-3">
-            {title && <h2 className="text-base font-medium">{title}</h2>}
+            {title && <h2 className="font-display text-sm font-semibold tracking-[0.15em] uppercase">{title}</h2>}
             {badge}
           </div>
           {actions && <div className="flex items-center gap-2">{actions}</div>}
         </div>
       )}
-      <div className="p-6">{children}</div>
+      <div className="p-6 relative">{children}</div>
     </section>
   );
 }
