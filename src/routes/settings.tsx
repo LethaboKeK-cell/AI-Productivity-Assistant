@@ -21,22 +21,13 @@ export const Route = createFileRoute("/settings")({
 const audiences: Audience[] = ["client", "manager", "team", "investor", "vendor"];
 const tones: Tone[] = ["formal", "informal", "persuasive", "urgent", "friendly"];
 
-const integrations: { key: keyof ReturnType<typeof getPrefs>["integrations"]; label: string; hint: string }[] = [
+const integrations: { key: keyof Preferences["integrations"]; label: string; hint: string }[] = [
   { key: "google_calendar", label: "Google Calendar", hint: "Push planner blocks as events" },
   { key: "outlook", label: "Microsoft Outlook", hint: "Send drafts to your Outlook inbox" },
   { key: "gmail", label: "Gmail", hint: "Open drafts in Gmail compose" },
   { key: "trello", label: "Trello", hint: "Export action items as cards" },
   { key: "asana", label: "Asana", hint: "Sync tasks to a workspace project" },
 ];
-
-function getPrefs() {
-  return {
-    integrations: {} as Record<
-      "google_calendar" | "outlook" | "gmail" | "trello" | "asana",
-      boolean
-    >,
-  };
-}
 
 function SettingsPage() {
   const prefs = useStore((s) => s.preferences);
