@@ -157,11 +157,24 @@ function PlannerPage() {
         title="AI Task Planner"
         description="Prioritized scheduling powered by your action items and meeting summaries."
         actions={
-          output && (
-            <Button variant="outline" onClick={exportICS}>
-              <Download className="size-4" /> Export .ics
-            </Button>
-          )
+          <div className="flex gap-2 flex-wrap justify-end">
+            {preferences.integrations.trello && actionItems.length > 0 && (
+              <Button variant="outline" size="sm" onClick={() => exportTasksCsv("trello")}>
+                <Download className="size-3.5" /> Trello CSV
+              </Button>
+            )}
+            {preferences.integrations.asana && actionItems.length > 0 && (
+              <Button variant="outline" size="sm" onClick={() => exportTasksCsv("asana")}>
+                <Download className="size-3.5" /> Asana CSV
+              </Button>
+            )}
+            {output && (
+              <Button variant="outline" onClick={exportICS}>
+                <Download className="size-4" />{" "}
+                {preferences.integrations.google_calendar ? "Google Calendar (.ics)" : "Export .ics"}
+              </Button>
+            )}
+          </div>
         }
       />
 
