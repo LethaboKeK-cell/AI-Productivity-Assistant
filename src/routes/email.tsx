@@ -246,6 +246,16 @@ function EmailPage() {
                 >
                   <Copy className="size-3.5" /> Copy
                 </Button>
+                {preferences.integrations.gmail && (
+                  <Button size="sm" variant="outline" onClick={exportGmail}>
+                    <ExternalLink className="size-3.5" /> Gmail
+                  </Button>
+                )}
+                {preferences.integrations.outlook && (
+                  <Button size="sm" variant="outline" onClick={exportOutlook}>
+                    <ExternalLink className="size-3.5" /> Outlook
+                  </Button>
+                )}
                 <Button size="sm" variant="primary" onClick={exportMailto}>
                   <Send className="size-3.5" /> Open in Mail
                 </Button>
