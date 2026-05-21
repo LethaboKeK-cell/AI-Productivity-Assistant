@@ -175,12 +175,15 @@ function EmailPage() {
               />
             </Field>
 
-            <Field label="Tone">
+            <Field label={`Tone${toneOverridden ? " (overridden)" : ` · default for ${audience}`}`}>
               <div className="flex flex-wrap gap-2">
                 {tones.map((t) => (
                   <button
                     key={t}
-                    onClick={() => setTone(t)}
+                    onClick={() => {
+                      setTone(t);
+                      setToneOverridden(true);
+                    }}
                     className={`px-3 py-1.5 text-xs rounded-md border capitalize transition-colors ${
                       tone === t
                         ? "bg-accent border-primary/40 text-foreground"
@@ -190,8 +193,20 @@ function EmailPage() {
                     {t}
                   </button>
                 ))}
+                {toneOverridden && (
+                  <button
+                    onClick={() => {
+                      setToneOverridden(false);
+                      setTone(preferences.toneByAudience[audience]);
+                    }}
+                    className="px-3 py-1.5 text-xs rounded-md border border-dashed border-border text-muted-foreground hover:text-foreground"
+                  >
+                    reset
+                  </button>
+                )}
               </div>
             </Field>
+
 
             <div className="flex items-center justify-between pt-2">
               <p className="text-xs text-muted-foreground">
