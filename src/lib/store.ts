@@ -31,16 +31,59 @@ export type EmailDraft = {
   createdAt: number;
 };
 
+export type Audience = "client" | "manager" | "team" | "investor" | "vendor";
+export type Tone = "formal" | "informal" | "persuasive" | "urgent" | "friendly";
+
+export type Preferences = {
+  contextAware: boolean;
+  toneByAudience: Record<Audience, Tone>;
+  defaultAudience: Audience;
+  signature: string;
+  integrations: {
+    google_calendar: boolean;
+    outlook: boolean;
+    gmail: boolean;
+    trello: boolean;
+    asana: boolean;
+  };
+};
+
 type State = {
   actionItems: ActionItem[];
   summaries: MeetingSummary[];
   drafts: EmailDraft[];
+  preferences: Preferences;
 };
 
-const KEY = "aeon-ai-suite-v1";
+const KEY = "aeon-ai-suite-v2";
 const isBrowser = typeof window !== "undefined";
 
-const initial: State = { actionItems: [], summaries: [], drafts: [] };
+const defaultPreferences: Preferences = {
+  contextAware: true,
+  toneByAudience: {
+    client: "formal",
+    manager: "formal",
+    team: "informal",
+    investor: "persuasive",
+    vendor: "formal",
+  },
+  defaultAudience: "manager",
+  signature: "",
+  integrations: {
+    google_calendar: false,
+    outlook: false,
+    gmail: false,
+    trello: false,
+    asana: false,
+  },
+};
+
+const initial: State = {
+  actionItems: [],
+  summaries: [],
+  drafts: [],
+  preferences: defaultPreferences,
+};
 
 function load(): State {
   if (!isBrowser) return initial;
