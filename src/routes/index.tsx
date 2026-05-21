@@ -28,12 +28,13 @@ function Dashboard() {
   return (
     <AppLayout>
       <PageHeader
-        title="Workspace Overview"
-        description="Automating your workflow across three core AI modules."
+        code="00 · COMMAND DECK"
+        title="Mission Control"
+        description="Coordinating your fleet of AI modules across communications, intelligence, and trajectory planning."
         actions={
           <Link to="/email">
             <Button variant="primary">
-              New Session <ArrowRight className="size-4" />
+              Launch Session <ArrowRight className="size-4" />
             </Button>
           </Link>
         }
@@ -149,12 +150,15 @@ function StatTile({
   hint: string;
 }) {
   return (
-    <div className="col-span-12 md:col-span-4 bg-surface border border-border rounded-xl p-5 shadow-card">
-      <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-3">
+    <div className="col-span-12 md:col-span-4 glass glow-border rounded-2xl p-5 relative overflow-hidden scanlines">
+      <p className="text-[10px] uppercase tracking-[0.3em] text-primary/80 mb-3 font-mono flex items-center gap-2">
+        <span className="size-1 rounded-full bg-primary shadow-glow" />
         {label}
       </p>
-      <p className="text-3xl font-semibold tabular-nums">{value}</p>
-      <p className="text-xs text-muted-foreground mt-1">{hint}</p>
+      <p className="font-display text-4xl font-semibold tabular-nums bg-gradient-to-b from-foreground to-primary/80 bg-clip-text text-transparent">
+        {value.toString().padStart(2, "0")}
+      </p>
+      <p className="text-xs text-muted-foreground mt-2">{hint}</p>
     </div>
   );
 }
@@ -177,21 +181,22 @@ function ModuleCard({
   return (
     <Link
       to={to}
-      className={`${colSpan} group bg-surface border border-border rounded-xl p-6 shadow-card hover:border-primary/40 hover:shadow-glow transition-all`}
+      className={`${colSpan} group glass glow-border rounded-2xl p-6 relative overflow-hidden scanlines hover:shadow-glow transition-all`}
     >
-      <div className="flex items-center justify-between mb-4">
+      <div className="absolute -top-12 -right-12 size-40 rounded-full bg-primary/10 blur-3xl group-hover:bg-primary/20 transition-all" />
+      <div className="flex items-center justify-between mb-4 relative">
         <div className="flex items-center gap-3">
-          <div className="size-9 rounded-lg bg-accent text-primary grid place-items-center">
+          <div className="size-10 rounded-lg bg-gradient-to-br from-primary/30 to-accent/30 border border-primary/30 text-primary grid place-items-center shadow-glow">
             {icon}
           </div>
-          <span className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
+          <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-primary/80">
             {tag}
           </span>
         </div>
-        <ArrowRight className="size-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+        <ArrowRight className="size-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
       </div>
-      <h3 className="text-lg font-medium mb-2">{title}</h3>
-      <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
+      <h3 className="font-display text-lg font-semibold tracking-wide mb-2 relative">{title}</h3>
+      <p className="text-sm text-muted-foreground leading-relaxed relative">{description}</p>
     </Link>
   );
 }
