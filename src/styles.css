@@ -1,6 +1,7 @@
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
 
 @custom-variant dark (&:is(.dark *));
 
@@ -36,43 +37,44 @@
   --color-success: var(--success);
   --color-warning: var(--warning);
 
-  --font-sans: "Inter", system-ui, sans-serif;
+  --font-sans: "Space Grotesk", system-ui, sans-serif;
+  --font-display: "Orbitron", "Space Grotesk", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 
-  --shadow-glow: 0 0 24px -4px oklch(0.62 0.18 277 / 0.45);
-  --shadow-card: 0 1px 0 0 oklch(1 0 0 / 0.04) inset, 0 8px 24px -12px oklch(0 0 0 / 0.6);
+  --shadow-glow: 0 0 32px -2px oklch(0.78 0.16 200 / 0.45), 0 0 12px -2px oklch(0.72 0.2 290 / 0.35);
+  --shadow-card: 0 1px 0 0 oklch(1 0 0 / 0.06) inset, 0 20px 60px -30px oklch(0.55 0.2 270 / 0.4);
 }
 
 :root,
 .dark {
-  --radius: 0.625rem;
+  --radius: 0.75rem;
 
-  /* Precision dark modular palette */
-  --background: oklch(0.16 0.005 264);            /* #09090b-ish */
-  --foreground: oklch(0.98 0.002 247);            /* #fafafa */
-  --surface: oklch(0.22 0.006 264);               /* #18181b */
-  --surface-foreground: oklch(0.98 0.002 247);
-  --card: oklch(0.22 0.006 264);
-  --card-foreground: oklch(0.98 0.002 247);
-  --popover: oklch(0.22 0.006 264);
-  --popover-foreground: oklch(0.98 0.002 247);
+  /* Deep space palette — nebula cyan + violet */
+  --background: oklch(0.13 0.03 270);              /* near-black with violet */
+  --foreground: oklch(0.97 0.012 220);
+  --surface: oklch(0.18 0.04 270 / 0.6);           /* translucent panels */
+  --surface-foreground: oklch(0.97 0.012 220);
+  --card: oklch(0.18 0.04 270 / 0.55);
+  --card-foreground: oklch(0.97 0.012 220);
+  --popover: oklch(0.18 0.04 270);
+  --popover-foreground: oklch(0.97 0.012 220);
 
-  --primary: oklch(0.62 0.19 277);                /* indigo #6366f1 */
-  --primary-foreground: oklch(0.98 0.002 247);
-  --secondary: oklch(0.28 0.008 264);
-  --secondary-foreground: oklch(0.98 0.002 247);
-  --muted: oklch(0.28 0.008 264);
-  --muted-foreground: oklch(0.62 0.013 264);      /* #71717a */
-  --accent: oklch(0.30 0.012 264);
-  --accent-foreground: oklch(0.98 0.002 247);
-  --destructive: oklch(0.62 0.22 25);
+  --primary: oklch(0.82 0.16 200);                 /* nebula cyan */
+  --primary-foreground: oklch(0.12 0.03 270);
+  --secondary: oklch(0.25 0.05 280);
+  --secondary-foreground: oklch(0.97 0.012 220);
+  --muted: oklch(0.22 0.04 275);
+  --muted-foreground: oklch(0.68 0.04 240);
+  --accent: oklch(0.28 0.08 290);                  /* violet accent */
+  --accent-foreground: oklch(0.97 0.012 220);
+  --destructive: oklch(0.68 0.24 22);
   --destructive-foreground: oklch(0.98 0.002 247);
-  --border: oklch(0.30 0.008 264);                /* #27272a */
-  --input: oklch(0.30 0.008 264);
-  --ring: oklch(0.62 0.19 277);
+  --border: oklch(0.45 0.08 240 / 0.25);           /* glowing edge */
+  --input: oklch(0.45 0.08 240 / 0.25);
+  --ring: oklch(0.82 0.16 200);
 
-  --success: oklch(0.74 0.16 160);                /* emerald */
-  --warning: oklch(0.76 0.15 60);                 /* orange */
+  --success: oklch(0.82 0.18 165);
+  --warning: oklch(0.82 0.17 75);
 }
 
 @layer base {
@@ -86,4 +88,106 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
   }
+  body {
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -10%, oklch(0.55 0.22 290 / 0.35), transparent 60%),
+      radial-gradient(ellipse 60% 40% at 90% 100%, oklch(0.55 0.2 200 / 0.25), transparent 60%),
+      radial-gradient(ellipse 40% 30% at 0% 60%, oklch(0.55 0.22 320 / 0.2), transparent 60%);
+    background-attachment: fixed;
+    background-color: var(--color-background);
+  }
+  .font-display {
+    font-family: var(--font-display);
+    letter-spacing: 0.02em;
+  }
 }
+
+/* Starfield layer */
+.starfield {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    radial-gradient(1px 1px at 20% 30%, white, transparent),
+    radial-gradient(1px 1px at 70% 80%, white, transparent),
+    radial-gradient(1px 1px at 40% 60%, oklch(0.9 0.05 220), transparent),
+    radial-gradient(1.5px 1.5px at 85% 20%, white, transparent),
+    radial-gradient(1px 1px at 10% 80%, oklch(0.85 0.1 290), transparent),
+    radial-gradient(1px 1px at 55% 15%, white, transparent),
+    radial-gradient(1px 1px at 90% 55%, white, transparent),
+    radial-gradient(1px 1px at 30% 90%, oklch(0.85 0.1 200), transparent),
+    radial-gradient(1.5px 1.5px at 65% 45%, white, transparent),
+    radial-gradient(1px 1px at 5% 40%, white, transparent);
+  background-size: 800px 800px;
+  opacity: 0.6;
+  animation: drift 120s linear infinite;
+}
+.starfield::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 15% 75%, white, transparent),
+    radial-gradient(1px 1px at 80% 35%, white, transparent),
+    radial-gradient(1px 1px at 50% 50%, white, transparent),
+    radial-gradient(1px 1px at 25% 20%, oklch(0.9 0.08 320), transparent),
+    radial-gradient(1px 1px at 95% 90%, white, transparent);
+  background-size: 400px 400px;
+  opacity: 0.4;
+  animation: twinkle 4s ease-in-out infinite alternate;
+}
+@keyframes drift {
+  from { background-position: 0 0; }
+  to   { background-position: 800px 400px; }
+}
+@keyframes twinkle {
+  from { opacity: 0.2; }
+  to   { opacity: 0.7; }
+}
+
+/* Glass panel */
+.glass {
+  background: linear-gradient(
+    135deg,
+    oklch(0.25 0.06 280 / 0.45),
+    oklch(0.18 0.05 260 / 0.35)
+  );
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  border: 1px solid oklch(0.7 0.1 220 / 0.18);
+  box-shadow:
+    0 1px 0 0 oklch(1 0 0 / 0.08) inset,
+    0 0 0 1px oklch(0.7 0.15 220 / 0.05) inset,
+    0 24px 60px -30px oklch(0.4 0.2 280 / 0.6);
+}
+
+.glow-border {
+  position: relative;
+}
+.glow-border::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, oklch(0.82 0.16 200 / 0.6), oklch(0.65 0.22 300 / 0.5), transparent 70%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  pointer-events: none;
+}
+
+.scanlines {
+  background-image: repeating-linear-gradient(
+    0deg,
+    oklch(1 0 0 / 0.02) 0 1px,
+    transparent 1px 3px
+  );
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 12px -2px oklch(0.82 0.16 200 / 0.6); }
+  50%      { box-shadow: 0 0 28px -2px oklch(0.82 0.16 200 / 0.9); }
+}
+.pulse-glow { animation: pulse-glow 2.4s ease-in-out infinite; }
