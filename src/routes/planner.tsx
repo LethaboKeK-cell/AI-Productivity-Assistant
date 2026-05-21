@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
-import { Calendar, Clock, Download, Loader2, Plus, Sparkles, Trash2, Wand2 } from "lucide-react";
+import { Clock, Download, Loader2, Plus, Sparkles, Trash2, Wand2 } from "lucide-react";
 import { AppLayout, PageHeader } from "@/components/AppLayout";
 import { Button, Card, Pill } from "@/components/ui-kit";
 import { planTasks } from "@/lib/ai.functions";
@@ -36,6 +36,7 @@ type Plan = {
 function PlannerPage() {
   const plan = useServerFn(planTasks);
   const actionItems = useStore((s) => s.actionItems);
+  const preferences = useStore((s) => s.preferences);
 
   const [range, setRange] = useState<"day" | "week">("day");
   const [context, setContext] = useState("");
@@ -44,6 +45,31 @@ function PlannerPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [output, setOutput] = useState<Plan | null>(null);
+
+  function exportTasksCsv(target: "trello" | "asana") {
+    if (actionItems.length === 0) return;
+    const header =
+      target === "trello"
+        ? ["Card Name", "Card Description", "Due Date", "Labels"]
+        : ["Name", "Notes", "Due Date", "Priority"];
+    const rows = actionItems.map((i) => [
+      i.task,
+      `Owner: ${i.owner} · Source: ${i.source}`,
+      i.deadline,
+      i.priority,
+    ]);
+    const csv = [header, ...rows]
+      .map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(","))
+      .join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `aeon-tasks-${target}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
 
   async function onGenerate() {
     if (actionItems.length === 0) return;
@@ -131,11 +157,24 @@ function PlannerPage() {
         title="AI Task Planner"
         description="Prioritized scheduling powered by your action items and meeting summaries."
         actions={
-          output && (
-            <Button variant="outline" onClick={exportICS}>
-              <Download className="size-4" /> Export .ics
-            </Button>
-          )
+          <div className="flex gap-2 flex-wrap justify-end">
+            {preferences.integrations.trello && actionItems.length > 0 && (
+              <Button variant="outline" size="sm" onClick={() => exportTasksCsv("trello")}>
+                <Download className="size-3.5" /> Trello CSV
+              </Button>
+            )}
+            {preferences.integrations.asana && actionItems.length > 0 && (
+              <Button variant="outline" size="sm" onClick={() => exportTasksCsv("asana")}>
+                <Download className="size-3.5" /> Asana CSV
+              </Button>
+            )}
+            {output && (
+              <Button variant="outline" onClick={exportICS}>
+                <Download className="size-4" />{" "}
+                {preferences.integrations.google_calendar ? "Google Calendar (.ics)" : "Export .ics"}
+              </Button>
+            )}
+          </div>
         }
       />
 

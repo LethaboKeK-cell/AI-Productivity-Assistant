@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useState } from "react";
-import { Copy, Loader2, Send, Wand2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Copy, ExternalLink, Loader2, Send, Sparkles, Wand2 } from "lucide-react";
 import { AppLayout, PageHeader } from "@/components/AppLayout";
 import { Button, Card, Pill } from "@/components/ui-kit";
 import { generateEmail } from "@/lib/ai.functions";
@@ -29,10 +29,14 @@ const audiences: Audience[] = ["client", "manager", "team", "investor", "vendor"
 
 function EmailPage() {
   const generate = useServerFn(generateEmail);
+  const preferences = useStore((s) => s.preferences);
+  const latestSummary = useStore((s) => s.summaries[0]);
+
   const [context, setContext] = useState("");
   const [recipient, setRecipient] = useState("");
-  const [tone, setTone] = useState<Tone>("formal");
-  const [audience, setAudience] = useState<Audience>("manager");
+  const [audience, setAudience] = useState<Audience>(preferences.defaultAudience);
+  const [tone, setTone] = useState<Tone>(preferences.toneByAudience[preferences.defaultAudience]);
+  const [toneOverridden, setToneOverridden] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [output, setOutput] = useState<{
@@ -44,6 +48,30 @@ function EmailPage() {
 
   const drafts = useStore((s) => s.drafts);
 
+  // Personalization: apply tone default when audience changes (unless user overrode)
+  useEffect(() => {
+    if (!toneOverridden) {
+      setTone(preferences.toneByAudience[audience]);
+    }
+  }, [audience, preferences.toneByAudience, toneOverridden]);
+
+  // Context awareness: prefill from latest summary on first mount
+  useEffect(() => {
+    if (preferences.contextAware && latestSummary && !context) {
+      setContext(
+        `Follow up on "${latestSummary.title}". Summary: ${latestSummary.summary}`,
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function pullFromLatestMeeting() {
+    if (!latestSummary) return;
+    setContext(
+      `Follow up on "${latestSummary.title}". Summary: ${latestSummary.summary}\n\nKey decisions:\n${latestSummary.decisions.map((d) => `- ${d}`).join("\n")}`,
+    );
+  }
+
   async function onGenerate() {
     if (!context.trim()) return;
     setLoading(true);
@@ -52,8 +80,11 @@ function EmailPage() {
       const res = await generate({
         data: { context: context.trim(), tone, audience, recipientName: recipient || undefined },
       });
-      setOutput(res);
-      store.addDraft({ ...res, tone, audience });
+      const withSig = preferences.signature
+        ? { ...res, signoff: `${res.signoff}\n${preferences.signature}` }
+        : res;
+      setOutput(withSig);
+      store.addDraft({ ...withSig, tone, audience });
     } catch (e) {
       setError(e instanceof Error ? e.message : "Generation failed");
     } finally {
@@ -73,12 +104,36 @@ function EmailPage() {
     window.location.href = url;
   }
 
+  function exportGmail() {
+    if (!output) return;
+    const url = `https://mail.google.com/mail/?view=cm&fs=1&su=${encodeURIComponent(
+      output.subject,
+    )}&body=${encodeURIComponent(`${output.greeting}\n\n${output.body}\n\n${output.signoff}`)}`;
+    window.open(url, "_blank");
+  }
+
+  function exportOutlook() {
+    if (!output) return;
+    const url = `https://outlook.office.com/mail/deeplink/compose?subject=${encodeURIComponent(
+      output.subject,
+    )}&body=${encodeURIComponent(`${output.greeting}\n\n${output.body}\n\n${output.signoff}`)}`;
+    window.open(url, "_blank");
+  }
+
   return (
     <AppLayout>
       <PageHeader
         title="Smart Email Generator"
         description="Describe the situation. Pick a tone and audience. Get a ready-to-send draft."
+        actions={
+          preferences.contextAware && latestSummary ? (
+            <Button variant="outline" size="md" onClick={pullFromLatestMeeting}>
+              <Sparkles className="size-4" /> Pull from latest meeting
+            </Button>
+          ) : undefined
+        }
       />
+
 
       <div className="grid grid-cols-12 gap-6">
         <Card
@@ -120,12 +175,15 @@ function EmailPage() {
               />
             </Field>
 
-            <Field label="Tone">
+            <Field label={`Tone${toneOverridden ? " (overridden)" : ` · default for ${audience}`}`}>
               <div className="flex flex-wrap gap-2">
                 {tones.map((t) => (
                   <button
                     key={t}
-                    onClick={() => setTone(t)}
+                    onClick={() => {
+                      setTone(t);
+                      setToneOverridden(true);
+                    }}
                     className={`px-3 py-1.5 text-xs rounded-md border capitalize transition-colors ${
                       tone === t
                         ? "bg-accent border-primary/40 text-foreground"
@@ -135,8 +193,20 @@ function EmailPage() {
                     {t}
                   </button>
                 ))}
+                {toneOverridden && (
+                  <button
+                    onClick={() => {
+                      setToneOverridden(false);
+                      setTone(preferences.toneByAudience[audience]);
+                    }}
+                    className="px-3 py-1.5 text-xs rounded-md border border-dashed border-border text-muted-foreground hover:text-foreground"
+                  >
+                    reset
+                  </button>
+                )}
               </div>
             </Field>
+
 
             <div className="flex items-center justify-between pt-2">
               <p className="text-xs text-muted-foreground">
@@ -176,6 +246,16 @@ function EmailPage() {
                 >
                   <Copy className="size-3.5" /> Copy
                 </Button>
+                {preferences.integrations.gmail && (
+                  <Button size="sm" variant="outline" onClick={exportGmail}>
+                    <ExternalLink className="size-3.5" /> Gmail
+                  </Button>
+                )}
+                {preferences.integrations.outlook && (
+                  <Button size="sm" variant="outline" onClick={exportOutlook}>
+                    <ExternalLink className="size-3.5" /> Outlook
+                  </Button>
+                )}
                 <Button size="sm" variant="primary" onClick={exportMailto}>
                   <Send className="size-3.5" /> Open in Mail
                 </Button>

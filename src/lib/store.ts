@@ -31,23 +31,82 @@ export type EmailDraft = {
   createdAt: number;
 };
 
+export type Audience = "client" | "manager" | "team" | "investor" | "vendor";
+export type Tone = "formal" | "informal" | "persuasive" | "urgent" | "friendly";
+
+export type Preferences = {
+  contextAware: boolean;
+  toneByAudience: Record<Audience, Tone>;
+  defaultAudience: Audience;
+  signature: string;
+  integrations: {
+    google_calendar: boolean;
+    outlook: boolean;
+    gmail: boolean;
+    trello: boolean;
+    asana: boolean;
+  };
+};
+
 type State = {
   actionItems: ActionItem[];
   summaries: MeetingSummary[];
   drafts: EmailDraft[];
+  preferences: Preferences;
 };
 
-const KEY = "aeon-ai-suite-v1";
+const KEY = "aeon-ai-suite-v2";
 const isBrowser = typeof window !== "undefined";
 
-const initial: State = { actionItems: [], summaries: [], drafts: [] };
+const defaultPreferences: Preferences = {
+  contextAware: true,
+  toneByAudience: {
+    client: "formal",
+    manager: "formal",
+    team: "informal",
+    investor: "persuasive",
+    vendor: "formal",
+  },
+  defaultAudience: "manager",
+  signature: "",
+  integrations: {
+    google_calendar: false,
+    outlook: false,
+    gmail: false,
+    trello: false,
+    asana: false,
+  },
+};
+
+const initial: State = {
+  actionItems: [],
+  summaries: [],
+  drafts: [],
+  preferences: defaultPreferences,
+};
 
 function load(): State {
   if (!isBrowser) return initial;
   try {
     const raw = window.localStorage.getItem(KEY);
     if (!raw) return initial;
-    return { ...initial, ...JSON.parse(raw) };
+    const parsed = JSON.parse(raw);
+    return {
+      ...initial,
+      ...parsed,
+      preferences: {
+        ...defaultPreferences,
+        ...(parsed.preferences ?? {}),
+        toneByAudience: {
+          ...defaultPreferences.toneByAudience,
+          ...(parsed.preferences?.toneByAudience ?? {}),
+        },
+        integrations: {
+          ...defaultPreferences.integrations,
+          ...(parsed.preferences?.integrations ?? {}),
+        },
+      },
+    };
   } catch {
     return initial;
   }
@@ -128,6 +187,44 @@ export const store = {
     state = { ...state, drafts: [draft, ...state.drafts] };
     emit();
     return draft;
+  },
+  updatePreferences(patch: Partial<Preferences>) {
+    state = {
+      ...state,
+      preferences: {
+        ...state.preferences,
+        ...patch,
+        toneByAudience: {
+          ...state.preferences.toneByAudience,
+          ...(patch.toneByAudience ?? {}),
+        },
+        integrations: {
+          ...state.preferences.integrations,
+          ...(patch.integrations ?? {}),
+        },
+      },
+    };
+    emit();
+  },
+  setToneForAudience(audience: Audience, tone: Tone) {
+    state = {
+      ...state,
+      preferences: {
+        ...state.preferences,
+        toneByAudience: { ...state.preferences.toneByAudience, [audience]: tone },
+      },
+    };
+    emit();
+  },
+  toggleIntegration(key: keyof Preferences["integrations"], enabled: boolean) {
+    state = {
+      ...state,
+      preferences: {
+        ...state.preferences,
+        integrations: { ...state.preferences.integrations, [key]: enabled },
+      },
+    };
+    emit();
   },
   clear() {
     state = initial;
