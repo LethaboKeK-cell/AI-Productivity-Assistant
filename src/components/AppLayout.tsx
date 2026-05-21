@@ -2,12 +2,19 @@ import { Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { LayoutDashboard, Mail, FileText, Calendar, Sparkles } from "lucide-react";
 import type { ReactNode } from "react";
 
-const nav = [
+type NavItem = {
+  to: "/" | "/email" | "/notes" | "/planner";
+  label: string;
+  icon: typeof LayoutDashboard;
+  exact?: boolean;
+};
+
+const nav: NavItem[] = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { to: "/email", label: "Email Engine", icon: Mail },
   { to: "/notes", label: "Meeting Notes", icon: FileText },
   { to: "/planner", label: "Task Planner", icon: Calendar },
-] as const;
+];
 
 export function AppLayout({ children }: { children?: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
