@@ -188,6 +188,44 @@ export const store = {
     emit();
     return draft;
   },
+  updatePreferences(patch: Partial<Preferences>) {
+    state = {
+      ...state,
+      preferences: {
+        ...state.preferences,
+        ...patch,
+        toneByAudience: {
+          ...state.preferences.toneByAudience,
+          ...(patch.toneByAudience ?? {}),
+        },
+        integrations: {
+          ...state.preferences.integrations,
+          ...(patch.integrations ?? {}),
+        },
+      },
+    };
+    emit();
+  },
+  setToneForAudience(audience: Audience, tone: Tone) {
+    state = {
+      ...state,
+      preferences: {
+        ...state.preferences,
+        toneByAudience: { ...state.preferences.toneByAudience, [audience]: tone },
+      },
+    };
+    emit();
+  },
+  toggleIntegration(key: keyof Preferences["integrations"], enabled: boolean) {
+    state = {
+      ...state,
+      preferences: {
+        ...state.preferences,
+        integrations: { ...state.preferences.integrations, [key]: enabled },
+      },
+    };
+    emit();
+  },
   clear() {
     state = initial;
     emit();
