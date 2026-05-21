@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
-import { Calendar, Clock, Download, Loader2, Plus, Sparkles, Trash2, Wand2 } from "lucide-react";
+import { Clock, Download, Loader2, Plus, Sparkles, Trash2, Wand2 } from "lucide-react";
 import { AppLayout, PageHeader } from "@/components/AppLayout";
 import { Button, Card, Pill } from "@/components/ui-kit";
 import { planTasks } from "@/lib/ai.functions";
