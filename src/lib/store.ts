@@ -90,7 +90,23 @@ function load(): State {
   try {
     const raw = window.localStorage.getItem(KEY);
     if (!raw) return initial;
-    return { ...initial, ...JSON.parse(raw) };
+    const parsed = JSON.parse(raw);
+    return {
+      ...initial,
+      ...parsed,
+      preferences: {
+        ...defaultPreferences,
+        ...(parsed.preferences ?? {}),
+        toneByAudience: {
+          ...defaultPreferences.toneByAudience,
+          ...(parsed.preferences?.toneByAudience ?? {}),
+        },
+        integrations: {
+          ...defaultPreferences.integrations,
+          ...(parsed.preferences?.integrations ?? {}),
+        },
+      },
+    };
   } catch {
     return initial;
   }
