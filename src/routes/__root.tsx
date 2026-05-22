@@ -86,6 +86,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
+      { name: "twitter:title", content: "Aeon AI — Productivity Suite" },
+      { name: "description", content: "Ai Hyper Productivity Assistant" },
+      { property: "og:description", content: "Ai Hyper Productivity Assistant" },
+      { name: "twitter:description", content: "Ai Hyper Productivity Assistant" },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/d2fb3eec-d465-4e54-af67-4b482af9ceb3/id-preview-7644fd30--36678a1e-20ff-4bb6-93b4-a192b94124c2.lovable.app-1779438095507.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/d2fb3eec-d465-4e54-af67-4b482af9ceb3/id-preview-7644fd30--36678a1e-20ff-4bb6-93b4-a192b94124c2.lovable.app-1779438095507.png" },
     ],
     links: [
       {
