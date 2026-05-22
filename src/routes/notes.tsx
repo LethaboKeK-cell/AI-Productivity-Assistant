@@ -5,6 +5,7 @@ import { ArrowRight, Brain, Copy, Loader2, Wand2 } from "lucide-react";
 import { AppLayout, PageHeader } from "@/components/AppLayout";
 import { Button, Card, Pill } from "@/components/ui-kit";
 import { summarizeNotes } from "@/lib/ai.functions";
+import { localSummarize } from "@/lib/local-ai";
 import { store, useStore } from "@/lib/store";
 
 export const Route = createFileRoute("/notes")({
@@ -38,6 +39,7 @@ const SAMPLE = `[10:02] Discussed Q4 roadmap. Sarah notes mobile latency is stil
 function NotesPage() {
   const summarize = useServerFn(summarizeNotes);
   const navigate = useNavigate();
+  const privacyMode = useStore((s) => s.preferences.privacyMode);
   const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -49,7 +51,10 @@ function NotesPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await summarize({ data: { notes: notes.trim() } });
+      const res =
+        privacyMode === "local"
+          ? localSummarize(notes.trim())
+          : await summarize({ data: { notes: notes.trim() } });
       setOutput(res);
       store.addSummary(res);
     } catch (e) {
