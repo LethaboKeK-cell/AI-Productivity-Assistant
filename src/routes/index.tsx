@@ -28,19 +28,19 @@ function Dashboard() {
   return (
     <AppLayout>
       <PageHeader
-        code="00 · COMMAND DECK"
-        title="Mission Control"
-        description="Coordinating your fleet of AI modules across communications, intelligence, and trajectory planning."
+        code="CLEARING · 00"
+        title="The Clearing"
+        description="A quiet overlook of your fleet of AI tools — letters, journal, and trail map all in reach."
         actions={
           <Link to="/email">
             <Button variant="primary">
-              Launch Session <ArrowRight className="size-4" />
+              Begin a draft <ArrowRight className="size-4" />
             </Button>
           </Link>
         }
       />
 
-      <div className="grid grid-cols-12 gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6 mb-8">
         <StatTile label="Action Items" value={actionItems.length} hint={`${highPriority} high priority`} />
         <StatTile label="Meeting Summaries" value={summaries.length} hint="From AI synthesis" />
         <StatTile label="Email Drafts" value={drafts.length} hint="Ready to export" />
@@ -150,7 +150,7 @@ function StatTile({
   hint: string;
 }) {
   return (
-    <div className="col-span-12 md:col-span-4 glass glow-border rounded-2xl p-5 relative overflow-hidden scanlines">
+    <div className="glass glow-border rounded-2xl p-5 relative overflow-hidden scanlines">
       <p className="text-[10px] uppercase tracking-[0.3em] text-primary/80 mb-3 font-mono flex items-center gap-2">
         <span className="size-1 rounded-full bg-primary shadow-glow" />
         {label}

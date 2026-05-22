@@ -5,6 +5,7 @@ import { Copy, ExternalLink, Loader2, Send, Sparkles, Wand2 } from "lucide-react
 import { AppLayout, PageHeader } from "@/components/AppLayout";
 import { Button, Card, Pill } from "@/components/ui-kit";
 import { generateEmail } from "@/lib/ai.functions";
+import { localEmail } from "@/lib/local-ai";
 import { store, useStore } from "@/lib/store";
 
 export const Route = createFileRoute("/email")({
@@ -77,9 +78,12 @@ function EmailPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await generate({
-        data: { context: context.trim(), tone, audience, recipientName: recipient || undefined },
-      });
+      const res =
+        preferences.privacyMode === "local"
+          ? localEmail({ context: context.trim(), tone, audience, recipientName: recipient || undefined })
+          : await generate({
+              data: { context: context.trim(), tone, audience, recipientName: recipient || undefined },
+            });
       const withSig = preferences.signature
         ? { ...res, signoff: `${res.signoff}\n${preferences.signature}` }
         : res;
@@ -142,7 +146,7 @@ function EmailPage() {
           badge={<Pill tone="primary">Active</Pill>}
         >
           <div className="space-y-5">
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <Field label="Recipient (optional)">
                 <input
                   value={recipient}

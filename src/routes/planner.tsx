@@ -5,6 +5,7 @@ import { Clock, Download, Loader2, Plus, Sparkles, Trash2, Wand2 } from "lucide-
 import { AppLayout, PageHeader } from "@/components/AppLayout";
 import { Button, Card, Pill } from "@/components/ui-kit";
 import { planTasks } from "@/lib/ai.functions";
+import { localPlan } from "@/lib/local-ai";
 import { store, useStore } from "@/lib/store";
 
 export const Route = createFileRoute("/planner")({
@@ -76,17 +77,21 @@ function PlannerPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await plan({
-        data: {
-          range,
-          context: context || undefined,
-          tasks: actionItems.map((i) => ({
-            task: i.task,
-            deadline: i.deadline,
-            priority: i.priority,
-          })),
-        },
-      });
+      const tasks = actionItems.map((i) => ({
+        task: i.task,
+        deadline: i.deadline,
+        priority: i.priority,
+      }));
+      const res =
+        preferences.privacyMode === "local"
+          ? localPlan({ range, context: context || undefined, tasks })
+          : await plan({
+              data: {
+                range,
+                context: context || undefined,
+                tasks,
+              },
+            });
       setOutput(res);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Planning failed");
